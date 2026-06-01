@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">SB</div><div class="brand-name">SolarBooked</div></div>
+      <nav class="nav">
+        <a class="nav-link" href="dashboard.html"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-link" href="leads.html"><span class="nav-icon">👥</span><span class="nav-text">Leads</span></a>
+        <a class="nav-link" href="calls.html"><span class="nav-icon">📞</span><span class="nav-text">Calls</span></a>
+        <a class="nav-link" href="analytics.html"><span class="nav-icon">📈</span><span class="nav-text">Analytics</span></a>
+        <a class="nav-link active" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+      </nav>
+      <button class="logout-button" data-logout><span class="nav-icon">↩</span><span class="nav-text">Logout</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h1>Settings</h1>
+        <div class="header-meta"><span data-last-updated>Last updated: --</span><button class="btn btn-secondary" id="refreshBtn">Refresh</button></div>
+      </header>
+
+      <section class="settings-grid">
+        <article class="card">
+          <h2 class="section-title">Client Info</h2>
+          <div class="form-group"><label for="companyName">Company Name</label><input class="input" id="companyName"></div>
+          <div class="form-group"><label for="contactEmail">Contact Email</label><input class="input" id="contactEmail" type="email"></div>
+          <div class="form-group"><label for="timezone">Timezone</label><select class="select" id="timezone"><option>EST</option><option>PST</option><option>CST</option><option>MST</option><option>GMT</option><option>AEST</option></select></div>
+        </article>
+
+        <article class="card">
+          <h2 class="section-title">Calling Schedule</h2>
+          <div class="form-group"><label for="dailyCallTime">Daily call time</label><input class="input" id="dailyCallTime" type="time"></div>
+          <p class="current-schedule" id="currentSchedule">Current scheduled time: <strong>Not set</strong></p>
+          <button class="btn btn-primary" id="saveScheduleBtn">Save Schedule</button>
+        </article>
+
+        <article class="card">
+          <h2 class="section-title">Call Settings</h2>
+          <div class="form-group"><label for="maxAttempts">Max attempts per lead</label><select class="select" id="maxAttempts"><option>1</option><option>2</option><option>3</option><option selected>4</option></select></div>
+          <div class="form-group"><label for="delayAttempts">Delay between attempts</label><select class="select" id="delayAttempts"><option>1hr</option><option>2hr</option><option>4hr</option><option>8hr</option><option>24hr</option></select></div>
+          <div class="form-group"><label for="callStart">Call hours start</label><input class="input" id="callStart" type="time"></div>
+          <div class="form-group"><label for="callEnd">Call hours end</label><input class="input" id="callEnd" type="time"></div>
+        </article>
+
+        <article class="card">
+          <h2 class="section-title">Notifications</h2>
+          <div class="toggle-row"><span>Email alerts for booked appointments</span><label class="toggle"><input id="bookedAlerts" type="checkbox"><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><span>Daily summary email</span><label class="toggle"><input id="dailySummary" type="checkbox"><span class="toggle-slider"></span></label></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

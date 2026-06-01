@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">SB</div><div class="brand-name">SolarBooked</div></div>
+      <nav class="nav">
+        <a class="nav-link" href="dashboard.html"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-link" href="leads.html"><span class="nav-icon">👥</span><span class="nav-text">Leads</span></a>
+        <a class="nav-link" href="calls.html"><span class="nav-icon">📞</span><span class="nav-text">Calls</span></a>
+        <a class="nav-link active" href="analytics.html"><span class="nav-icon">📈</span><span class="nav-text">Analytics</span></a>
+        <a class="nav-link" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+      </nav>
+      <button class="logout-button" data-logout><span class="nav-icon">↩</span><span class="nav-text">Logout</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h1>Analytics</h1>
+        <div class="header-meta"><span data-last-updated>Last updated: --</span><button class="btn btn-secondary" id="refreshBtn">Refresh</button></div>
+      </header>
+
+      <div class="toolbar">
+        <div class="toolbar-left"><select class="select" id="analyticsRange"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></div>
+        <div class="toolbar-right"><button class="btn btn-secondary" id="exportAnalyticsBtn">Download analytics as CSV</button></div>
+      </div>
+
+      <section class="grid analytics-grid">
+        <article class="card"><div class="metric-label">Total Leads</div><div class="metric-value" id="metricLeads">--</div></article>
+        <article class="card"><div class="metric-label">Total Calls Made</div><div class="metric-value" id="metricCalls">--</div></article>
+        <article class="card"><div class="metric-label">Answer Rate</div><div class="metric-value" id="metricAnswerRate">--</div></article>
+        <article class="card"><div class="metric-label">Booking Rate</div><div class="metric-value" id="metricBookingRate">--</div></article>
+        <article class="card"><div class="metric-label">Total Spend</div><div class="metric-value" id="metricSpend">--</div></article>
+        <article class="card"><div class="metric-label">Avg Cost Per Call</div><div class="metric-value" id="metricAvgCost">--</div></article>
+      </section>
+
+      <section class="grid chart-grid section">
+        <article class="card chart-card"><h2 class="section-title">Calls Per Day</h2><canvas id="callsPerDayChart"></canvas></article>
+        <article class="card chart-card"><h2 class="section-title">Call Outcomes</h2><canvas id="outcomesChart"></canvas></article>
+        <article class="card chart-card"><h2 class="section-title">Leads by Status</h2><canvas id="leadsStatusChart"></canvas></article>
+        <article class="card chart-card"><h2 class="section-title">Daily Spend</h2><canvas id="dailySpendChart"></canvas></article>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>

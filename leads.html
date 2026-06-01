@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Leads</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">SB</div><div class="brand-name">SolarBooked</div></div>
+      <nav class="nav">
+        <a class="nav-link" href="dashboard.html"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-link active" href="leads.html"><span class="nav-icon">👥</span><span class="nav-text">Leads</span></a>
+        <a class="nav-link" href="calls.html"><span class="nav-icon">📞</span><span class="nav-text">Calls</span></a>
+        <a class="nav-link" href="analytics.html"><span class="nav-icon">📈</span><span class="nav-text">Analytics</span></a>
+        <a class="nav-link" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+      </nav>
+      <button class="logout-button" data-logout><span class="nav-icon">↩</span><span class="nav-text">Logout</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h1>Leads</h1>
+        <div class="header-meta"><span data-last-updated>Last updated: --</span><button class="btn btn-secondary" id="refreshBtn">Refresh</button></div>
+      </header>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <input class="input search-input" id="leadSearch" type="search" placeholder="Search leads">
+          <select class="select" id="statusFilter">
+            <option value="all">All</option>
+            <option value="pending">pending</option>
+            <option value="calling">calling</option>
+            <option value="completed">completed</option>
+            <option value="booked">booked</option>
+            <option value="no-answer">no-answer</option>
+            <option value="failed">failed</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <input class="hidden" id="csvFile" type="file" accept=".csv,.xlsx,.xls">
+          <button class="btn btn-secondary" id="importBtn">Import CSV</button>
+          <button class="btn btn-primary" id="addLeadBtn">Add Lead</button>
+        </div>
+      </div>
+
+      <div class="bulk-bar" id="bulkBar">
+        <strong id="selectedCount">0 selected</strong>
+        <div class="actions-row">
+          <button class="btn btn-primary" id="callSelectedBtn">Call Selected (0)</button>
+          <button class="btn btn-secondary" id="exportSelectedBtn">Export Selected</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead><tr><th><input type="checkbox" id="selectAll"></th><th>First Name</th><th>Last Name</th><th>Mobile</th><th>Email</th><th>Status</th><th>Attempts</th><th>Last Called</th><th>Actions</th></tr></thead>
+          <tbody id="leadsBody"><tr><td colspan="9">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination"><button class="btn btn-secondary" id="prevPage">Previous</button><span id="pageInfo">Page 1</span><button class="btn btn-secondary" id="nextPage">Next</button></div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="leadModal">
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal="leadModal">×</button>
+      <h2>Add Lead</h2>
+      <form id="addLeadForm" class="section">
+        <div class="form-group"><label for="newFirstName">First Name</label><input class="input" id="newFirstName" required></div>
+        <div class="form-group"><label for="newLastName">Last Name</label><input class="input" id="newLastName" required></div>
+        <div class="form-group"><label for="newMobile">Mobile</label><input class="input" id="newMobile" required></div>
+        <div class="form-group"><label for="newEmail">Email</label><input class="input" id="newEmail" type="email" required></div>
+        <div class="form-group"><label for="newAssignee">Assignee</label><input class="input" id="newAssignee"></div>
+        <button class="btn btn-primary" type="submit">Save Lead</button>
+      </form>
+      <div class="callout">New leads are added to this browser view. Save them to Google Sheets manually until write access is connected.</div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal="detailModal">×</button>
+      <h2>Lead Details</h2>
+      <div id="leadDetails"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="importModal">
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal="importModal">×</button>
+      <h2>CSV Preview</h2>
+      <div class="preview-wrap" id="importPreview"></div>
+      <div class="callout">Imported rows will display locally. Save them to Google Sheets manually until write access is connected.</div>
+      <div class="actions-row section"><button class="btn btn-primary" id="confirmImportBtn">Confirm Import</button></div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/leads.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="brand">
+      <div class="brand-mark">SB</div>
+      <div>
+        <div class="brand-name">SolarBooked</div>
+        <div class="metric-label">Voice AI Calling Dashboard</div>
+      </div>
+    </div>
+
+    <form id="loginForm">
+      <div id="loginError" class="error-message"></div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input class="input" type="email" id="email" autocomplete="email" value="demo@solarbooked.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input class="input" type="password" id="password" autocomplete="current-password" value="solar2026" required>
+      </div>
+      <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    initLogin();
+  </script>
+</body>
+</html>

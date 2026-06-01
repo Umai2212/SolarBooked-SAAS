@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">SB</div><div class="brand-name">SolarBooked</div></div>
+      <nav class="nav">
+        <a class="nav-link active" href="dashboard.html"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-link" href="leads.html"><span class="nav-icon">👥</span><span class="nav-text">Leads</span></a>
+        <a class="nav-link" href="calls.html"><span class="nav-icon">📞</span><span class="nav-text">Calls</span></a>
+        <a class="nav-link" href="analytics.html"><span class="nav-icon">📈</span><span class="nav-text">Analytics</span></a>
+        <a class="nav-link" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+      </nav>
+      <button class="logout-button" data-logout><span class="nav-icon">↩</span><span class="nav-text">Logout</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h1>Dashboard</h1>
+        <div class="header-meta">
+          <span data-last-updated>Last updated: --</span>
+          <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+        </div>
+      </header>
+
+      <section class="grid metric-grid">
+        <article class="card"><div class="metric-label">Total Leads</div><div class="metric-value" id="totalLeads">--</div></article>
+        <article class="card"><div class="metric-label">Calls Today</div><div class="metric-value" id="callsToday">--</div></article>
+        <article class="card"><div class="metric-label">Appointments Booked</div><div class="metric-value" id="bookedCount">--</div></article>
+        <article class="card"><div class="metric-label">Answer Rate</div><div class="metric-value" id="answerRate">--</div></article>
+      </section>
+
+      <section class="section card">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="actions-row">
+          <button class="btn btn-primary" id="bulkCallBtn">📞 Call All Pending</button>
+          <button class="btn btn-danger" id="stopCallsBtn">⛔ Stop All Calls</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">Recent Calls</h2>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Time</th><th>Phone</th><th>Duration</th><th>Outcome</th><th>Cost</th><th>Recording</th></tr></thead>
+            <tbody id="recentCallsBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    requireAuth();
+
+    let dashboardCalls = [];
+    let dashboardLeads = [];
+
+    // Loads dashboard data and refreshes all overview widgets.
+    async function loadDashboard() {
+      document.getElementById('recentCallsBody').innerHTML = skeletonRows(6, 5);
+      try {
+        const [leads, calls] = await Promise.all([getSheetData(CONFIG.SHEETS.leads), getSheetData(CONFIG.SHEETS.calls)]);
+        dashboardLeads = leads;
+        dashboardCalls = calls;
+        renderMetrics();
+        renderRecentCalls();
+        updateLastUpdated();
+      } catch (error) {
+        showToast('Dashboard data could not be refreshed.', 'error');
+      }
+    }
+
+    // Calculates and renders the dashboard metric cards.
+    function renderMetrics() {
+      const today = new Date().toDateString();
+      const callsToday = dashboardCalls.filter((call) => {
+        const started = new Date(call.started);
+        return !Number.isNaN(started.getTime()) && started.toDateString() === today;
+      }).length;
+      const booked = dashboardLeads.filter((lead) => String(lead.Status || '').toLowerCase() === 'booked').length;
+      const answered = dashboardCalls.filter((call) => !String(call['ended reason'] || '').toLowerCase().includes('no-answer')).length;
+      const answerRate = dashboardCalls.length ? Math.round((answered / dashboardCalls.length) * 100) : 0;
+
+      document.getElementById('totalLeads').textContent = dashboardLeads.length;
+      document.getElementById('callsToday').textContent = callsToday;
+      document.getElementById('bookedCount').textContent = booked;
+      document.getElementById('answerRate').textContent = `${answerRate}%`;
+    }
+
+    // Renders the ten most recent calls in the dashboard table.
+    function renderRecentCalls() {
+      const body = document.getElementById('recentCallsBody');
+      const rows = dashboardCalls.slice().sort((a, b) => new Date(b.started) - new Date(a.started)).slice(0, 10);
+      if (rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" class="empty-state">No data found</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.map((call, index) => `
+        <tr>
+          <td>${formatDateTime(call.started)}</td>
+          <td>${formatPhone(call.customernumber)}</td>
+          <td>${formatDuration(call.milliseconds)}</td>
+          <td>${badge(call['ended reason'], 'outcome')}</td>
+          <td>${formatCost(call['cost(total)'])}</td>
+          <td>${call.recording ? `<button class="btn btn-secondary icon-button" data-audio="${index}">▶</button>` : 'No recording'}</td>
+        </tr>
+        ${call.recording ? `<tr class="audio-row hidden" id="audio-${index}"><td colspan="6"><audio class="inline-player" controls src="${call.recording}"></audio></td></tr>` : ''}
+      `).join('');
+      body.querySelectorAll('[data-audio]').forEach((button) => {
+        button.addEventListener('click', () => document.getElementById(`audio-${button.dataset.audio}`).classList.toggle('hidden'));
+      });
+    }
+
+    // Triggers bulk calling after a confirmation dialog.
+    async function handleBulkCall() {
+      if (!confirm('Call all pending leads now?')) return;
+      showLoading('bulkCallBtn');
+      try {
+        const response = await triggerBulkCall();
+        showToast(response.result || 'Bulk calling started.', 'success');
+      } catch (error) {
+        showToast('Could not start bulk calling.', 'error');
+      } finally {
+        hideLoading('bulkCallBtn');
+      }
+    }
+
+    initLogout();
+    updateLastUpdated();
+    document.getElementById('refreshBtn').addEventListener('click', loadDashboard);
+    document.getElementById('bulkCallBtn').addEventListener('click', handleBulkCall);
+    document.getElementById('stopCallsBtn').addEventListener('click', () => showToast('Stop command queued. Connect a stop webhook to make this live.', 'info'));
+    loadDashboard();
+    window.setInterval(loadDashboard, CONFIG.REFRESH_INTERVAL);
+  </script>
+</body>
+</html>

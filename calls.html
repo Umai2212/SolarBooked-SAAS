@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SolarBooked Calls</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">SB</div><div class="brand-name">SolarBooked</div></div>
+      <nav class="nav">
+        <a class="nav-link" href="dashboard.html"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-link" href="leads.html"><span class="nav-icon">👥</span><span class="nav-text">Leads</span></a>
+        <a class="nav-link active" href="calls.html"><span class="nav-icon">📞</span><span class="nav-text">Calls</span></a>
+        <a class="nav-link" href="analytics.html"><span class="nav-icon">📈</span><span class="nav-text">Analytics</span></a>
+        <a class="nav-link" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+      </nav>
+      <button class="logout-button" data-logout><span class="nav-icon">↩</span><span class="nav-text">Logout</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h1>Call History</h1>
+        <div class="header-meta"><span data-last-updated>Last updated: --</span><button class="btn btn-secondary" id="refreshBtn">Refresh</button></div>
+      </header>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <select class="select" id="rangeFilter"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="all">All time</option></select>
+          <input class="input search-input" id="phoneSearch" type="search" placeholder="Search by phone number">
+        </div>
+        <div class="toolbar-right"><button class="btn btn-secondary" id="exportCallsBtn">Export CSV</button></div>
+      </div>
+
+      <section class="summary-bar">
+        <div class="summary-pill">Total calls: <strong id="summaryCalls">--</strong></div>
+        <div class="summary-pill">Total duration: <strong id="summaryDuration">--</strong></div>
+        <div class="summary-pill">Total cost: <strong id="summaryCost">--</strong></div>
+        <div class="summary-pill">Average duration: <strong id="summaryAverage">--</strong></div>
+      </section>
+
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Date/Time</th><th>Phone</th><th>Duration</th><th>Type</th><th>Ended Reason</th><th>Cost</th><th>Transcript</th><th>Recording</th></tr></thead>
+          <tbody id="callsBody"><tr><td colspan="8">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/calls.js"></script>
+</body>
+</html>
